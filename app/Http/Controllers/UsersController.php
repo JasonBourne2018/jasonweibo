@@ -7,6 +7,16 @@ use App\Models\User;
 
 class UsersController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth', [
+            'except'    =>  ['show', 'create', 'store']
+        ]);
+
+        $this->middleware('guest', [
+            'only'  =>  ['create']
+        ])
+    }
     public function create()
     {
         return view('users.create');
@@ -43,6 +53,7 @@ class UsersController extends Controller
 
     public function update(User $user, Request $request)
     {
+        $this->authorize('update', $user);
         $this->validate($request, [
             'name'  => 'required|max:50',
             'password'  => 'required|confirmed|min:6'
